@@ -401,6 +401,7 @@ class DatasetID:
         fh = self._fh
         if self.pseudo_chunking_size:
             chunk_shape, stride = __get_pseudo_shape()
+            stride = int(stride)
             offset_finder = LocalOffset(self.shape,chunk_shape,stride)
             array = ZarrArrayStub(self.shape, chunk_shape)
             indexer = OrthogonalIndexer(args, array)
@@ -410,6 +411,7 @@ class DatasetID:
 
             for chunk_coords, chunk_selection, out_selection in indexer:
                 index = self.data_offset + offset_finder.coord_to_offset(chunk_coords)
+                index = int(index)
                 fh.seek(index)
                 chunk_buffer = fh.read(stride)
                 chunk_data = np.frombuffer(chunk_buffer, dtype=self._dtype).copy()

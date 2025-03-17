@@ -435,7 +435,14 @@ class DimensionProxy(Sequence):
     """ Represents a HDF5 "dimension". """
 
     def __init__(self, dset_file, label, refs):
-        self.label = label.decode('utf-8')
+        try:
+            # decode a byte string
+            label = label.decode('utf-8')
+        except AttributeError:
+            # str doesn't have a decode method
+            pass
+
+        self.label = label
         self._refs = refs
         self._file = dset_file
 

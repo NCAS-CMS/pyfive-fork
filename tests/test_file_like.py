@@ -49,8 +49,8 @@ def test_read_latest_fileobj():
 
             # sub-group
             subgroup = grp['subgroup1']
-            assert subgroup.attrs['attr5'] == b'Test'
-            assert isinstance(subgroup.attrs['attr5'], bytes)
+            assert subgroup.attrs['attr5'] == 'Test'
+            assert isinstance(subgroup.attrs['attr5'], str)
 
             dset3 = subgroup['dataset3']
             assert_array_equal(dset2[:], np.arange(4))
