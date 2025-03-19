@@ -24,7 +24,6 @@ def check_enum_dtype(dt):
     except AttributeError:
         return None
     
-
 def check_string_dtype(dt):
     """Pyfive version of h5py.h5t.check_string_dtype.
 

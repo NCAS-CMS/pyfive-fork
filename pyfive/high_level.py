@@ -408,8 +408,6 @@ class Dataset(object):
         """ attrs attribute. """
         return self.id._meta.attributes
      
-
-
 class DimensionManager(Sequence):
     """ Represents a collection of dimensions associated with a dataset. """
     def __init__(self, dset):
