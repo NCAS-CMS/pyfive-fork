@@ -2,6 +2,10 @@
 # These are provided to support h5netcdf, and are not used
 # by the pyfive package itself. 
 #
+from collections import namedtuple
+
+
+string_info = namedtuple('string_info', ['encoding', 'length'])
 
 
 def check_enum_dtype(dt):
@@ -20,29 +24,25 @@ def check_enum_dtype(dt):
     except AttributeError:
         return None
     
-
 def check_string_dtype(dt):
-    """
-    If the dtype represents an HDF5 string, returns a string_info object.
+    """Pyfive version of h5py.h5t.check_string_dtype.
+
     The returned string_info object holds the encoding and the length.
-    The encoding can only be 'utf-8' or 'ascii'. The length may be None
-    for a variable-length string, or a fixed length in bytes.
-    Returns None if the dtype does not represent an HDF5 string.
-    ---
-    It's not obvious what this is used for yet, so we just return None 
-    for now.
+    The encoding can only be 'utf-8'. The length will be None for a
+    variable-length string.
+
+    Returns None if the dtype does not represent a pyfive string.
     """
-    #vlen_kind = check_vlen_dtype(dt)
-    #    return string_info('utf-8', None)
-    ##if vlen_kind is unicode:
-    #elif vlen_kind is bytes:
-    #    return string_info('ascii', None)
-    #elif dt.kind == 'S':
-    #    enc = (dt.metadata or {}).get('h5py_encoding', 'ascii')
-    #    return string_info(enc, dt.itemsize)
-    #else:
-    #    return None
+    if dt.kind == 'S':
+        return string_info('utf-8', dt.itemsize)
+
+    if dt.kind == 'O':
+        # vlen string
+        enc = (dt.metadata or {}).get('h5py_encoding', 'ascii')
+        return string_info(enc, None)
+
     return None
+
 def check_dtype(**kwds):
     """ Check a dtype for h5py special type "hint" information.  Only one
     keyword may be given.

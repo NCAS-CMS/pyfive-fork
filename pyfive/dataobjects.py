@@ -240,25 +240,23 @@ class DataObjects(object):
             value = value[0]
         else:
             value = value.reshape(shape)
-        
-        return name, value
 
-    
+        return name, value
 
     def _attr_value(self, dtype, buf, count, offset):
         """ Retrieve an HDF5 attribute value from a buffer. """
         if isinstance(dtype, tuple):
             dtype_class = dtype[0]
-            value = np.empty(count, dtype=object)
+            if dtype_class == 'VLEN_STRING':
+                fdtype = np.dtype('O', metadata={'h5py_encoding': 'utf-8'})
+            else:
+                fdtype=  np.dtype('O')
+
+            value = np.empty(count, dtype=fdtype)
             for i in range(count):
                 if dtype_class == 'VLEN_STRING':
-                    _, _, character_set = dtype
                     _, vlen_data = self._vlen_size_and_data(buf, offset)
-                    if character_set == 0:
-                        # ascii character set, return as bytes
-                        value[i] = vlen_data
-                    else:
-                        value[i] = vlen_data.decode('utf-8')
+                    value[i] = vlen_data.decode('utf-8')
                     offset += 16
                 elif dtype_class == 'REFERENCE':
                     address, = struct.unpack_from('<Q', buf, offset=offset)
