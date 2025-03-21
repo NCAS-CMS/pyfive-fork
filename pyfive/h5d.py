@@ -91,7 +91,8 @@ class DatasetID:
         self._meta = DatasetMeta(dataobject)
 
         self._index =  None
-        match self.layout_class:
+        # throws a flake8 wobbly for Python<3.10; match is Py3.10+ syntax
+        match self.layout_class:  # noqa
             case 0:  #compact storage
                 raise NotImplementedError("Compact Storage")
             case 1:  # contiguous storage
@@ -153,7 +154,8 @@ class DatasetID:
     def get_data(self, args, fillvalue):
         """ Called by the dataset getitem method """
         dtype = self._dtype
-        match self.layout_class:
+        # throws a flake8 wobbly for Python<3.10; match is Py3.10+ syntax
+        match self.layout_class:  # noqa
             case 0:  #compact storage
                 raise NotImplementedError("Compact Storage")
             case 1:  # contiguous storage
