@@ -159,7 +159,7 @@ class DataObjects(object):
         #assume we only have one of these
         if len(attr_info) > 1:
             raise NotImplementedError('Multiple Attribute Info Messages not supported')
-        print ('attr_info=', attr_info)
+
         offset = attr_info[0]['offset_to_message']
         data = _unpack_struct_from(ATTR_INFO_MESSAGE, self.msg_data, offset)
         heap_address = data['fractal_heap_address']
@@ -216,19 +216,18 @@ class DataObjects(object):
         name = name.strip(b'\x00').decode('utf-8')
         offset += _padded_size(name_size, padding_multiple)
 
-        print ('\nname=', name)
         # Read the datatype information
         try:
             dtype = DatatypeMessage(buffer, offset).dtype
         except NotImplementedError:
             if name == 'REFERENCE_LIST':
-                print ('HERE@')
                 pass #suppress this one, no one actually cares about these as far as I know
             else:
                 warnings.warn(
                     f"Attribute {name} type not implemented, set to None."
                 )
             return name, None
+        
         offset += _padded_size(attr_dict['datatype_size'], padding_multiple)
 
         # Read the dataspace information
@@ -243,9 +242,8 @@ class DataObjects(object):
 
         # Read the value(s)
         value = self._attr_value(dtype, buffer, items, offset)
-        print (9999, repr(value), value.shape, shape)
+
         if not shape:
-            print('ttt', repr(value))
             if dtype == "S1" and not value.size:
                 # This attribute is an empty string
                 value = b""

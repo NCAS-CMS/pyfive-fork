@@ -61,7 +61,6 @@ class Group(Mapping):
     def __getitem__(self, y):
         """ x.__getitem__(y) <==> x[y] """
         if isinstance(y, Reference):
-            print (8888)
             return self._dereference(y)
 
         path = posixpath.normpath(y)
