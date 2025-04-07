@@ -6,7 +6,7 @@ from collections import OrderedDict
 import struct
 import warnings
 from io import UnsupportedOperation
-
+from math import prod
 import numpy as np
 
 from pyfive.datatype_msg import DatatypeMessage
@@ -230,14 +230,23 @@ class DataObjects(object):
 
         # Read the dataspace information
         shape, maxshape = determine_data_shape(buffer, offset)
-        items = int(np.prod(shape))
+        items = prod(shape)
         offset += _padded_size(attr_dict['dataspace_size'], padding_multiple)
+
+        if dtype == "S1" and offset == len(buffer):
+            # This attribute is an empty string, so don't try to read
+            # anything from the buffer
+            items = 0
 
         # Read the value(s)
         value = self._attr_value(dtype, buffer, items, offset)
 
-        if shape == ():
-            value = value[0]
+        if not shape:
+            if dtype == "S1" and not value:
+                # This attribute is an empty string
+                value = b""
+            else:
+                value = value[0]
         else:
             value = value.reshape(shape)
 

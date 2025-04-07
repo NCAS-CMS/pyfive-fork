@@ -22,14 +22,16 @@ with h5py.File('attr_datatypes_2.hdf5', 'w') as ds:
     ds.attrs["ascii_1dim"] = np.array([ascii], dtype=dt)
     ds.attrs["ascii_array"] = np.array([ascii, "foobar"], dtype=dt)
     ds.attrs["ascii_list"] = [ascii]
-    
+    ds.attrs["ascii_empty"] = ""
+
     ascii = b"ascii"
     ds.attrs["bytes"] = ascii
     ds.attrs["bytes_0dim"] = np.array(ascii, dtype=dt)
     ds.attrs["bytes_1dim"] = np.array([ascii], dtype=dt)
     ds.attrs["bytes_array"] = np.array([ascii, b"foobar"], dtype=dt)
     ds.attrs["bytes_list"] = [ascii]
-    
+    ds.attrs["bytes_empty"] = b""
+
     dt = h5py.string_dtype("utf-8", 10)
     # unicode needs to be encoded properly for fixed size string type
     ds.attrs["unicode_fixed"] = np.array(unicode.encode("utf-8"), dtype=dt)
