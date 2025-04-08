@@ -146,6 +146,7 @@ class DataObjects(object):
             offset = msg['offset_to_message']
             name, value = self.unpack_attribute(offset)
             attrs[name] = value
+
         # Attributes may also be stored in objects reference in the
         # Attribute Info Message (0x0015, 21).
         # Assume we can have both types though I suspect this is not the case
@@ -315,10 +316,14 @@ class DataObjects(object):
     @property
     def maxshape(self):
         """ Maximum Shape of the dataset. (None for unlimited dimension) """
-        msg = self.find_msg_type(DATASPACE_MSG_TYPE)[0]
-        msg_offset = msg['offset_to_message']
-        shape, maxshape = determine_data_shape(self.msg_data, msg_offset)
-        return maxshape
+        try:
+            return self._cached_maxshape
+        except AttributeError:
+            msg = self.find_msg_type(DATASPACE_MSG_TYPE)[0]
+            msg_offset = msg['offset_to_message']
+            shape, maxshape = determine_data_shape(self.msg_data, msg_offset)
+            self._cached_maxshape = maxshape
+            return maxshape
 
     @property
     def fillvalue(self):
