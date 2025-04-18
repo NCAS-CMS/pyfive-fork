@@ -558,7 +558,11 @@ class DatasetID:
         #            the file and cache it.
         fh = self.__fh
         if fh.closed:
-            fh = open(self._filename, 'rb')
+            try:
+                fh = fh.s3.open(self._filename)
+            except AttributeError:
+                fh = open(self._filename, 'rb')
+
             self.__fh = fh
 
         return fh
@@ -579,7 +583,7 @@ class DatasetMeta:
     """
     def __init__(self, dataobject):
 
-        self.attributes = dataobject.compression
+#        self.attributes = dataobject.compression
         self.maxshape = dataobject.maxshape
         self.compression = dataobject.compression
         self.compression_opts = dataobject.compression_opts
@@ -587,7 +591,6 @@ class DatasetMeta:
         self.fletcher32 = dataobject.fletcher32
         self.fillvalue = dataobject.fillvalue
         self.attributes = dataobject.get_attributes()
-
         #horrible kludge for now, this isn't really the same sort of thing
         #https://github.com/NCAS-CMS/pyfive/issues/13#issuecomment-2557121461
         # this is used directly in the Dataset init method.
