@@ -25,7 +25,7 @@ class DatasetID:
     instance, it is completely independent of the parent file, and it can be used 
     efficiently in distributed threads without thread contention to the b-tree etc.
     """
-    def __init__(self, dataobject, pseudo_chunking_size_MB=4):
+    def __init__(self, dataobject, pseudo_chunking_size_MB=4, build_index=True):
         """ 
         Instantiated with the pyfive datasetdataobject, we copy and cache everything 
         we want so that the only file operations are now data accesses.
@@ -42,7 +42,6 @@ class DatasetID:
         it.)
 
         """
-
         self._order = dataobject.order
         fh = dataobject.fh
         
@@ -92,13 +91,14 @@ class DatasetID:
 
         self._index =  None
         # throws a flake8 wobbly for Python<3.10; match is Py3.10+ syntax
-        match self.layout_class:  # noqa
-            case 0:  #compact storage
-                raise NotImplementedError("Compact Storage")
-            case 1:  # contiguous storage
-                self.data_offset, = struct.unpack_from('<Q', dataobject.msg_data, self.property_offset)
-            case 2:  # chunked storage
-                self._build_index(dataobject)
+        if build_index:
+            match self.layout_class:  # noqa
+                case 0:  #compact storage
+                    raise NotImplementedError("Compact Storage")
+                case 1:  # contiguous storage
+                    self.data_offset, = struct.unpack_from('<Q', dataobject.msg_data, self.property_offset)
+                case 2:  # chunked storage
+                    self._build_index(dataobject)
 
     def __hash__(self):
         """ The hash is based on assuming the file path, the location
@@ -290,7 +290,10 @@ class DatasetID:
             return
         
         logging.info(f'Building chunk index in pyfive {version("pyfive")}')
-       
+
+        print (1)
+        print ( dataobject._chunk_address, dataobject._chunk_dims)
+        print(2)
         chunk_btree = BTreeV1RawDataChunks(
                 dataobject.fh, dataobject._chunk_address, dataobject._chunk_dims)
         
@@ -559,7 +562,7 @@ class DatasetID:
         fh = self.__fh
         if fh.closed:
             try:
-                fh = fh.s3.open(self._filename)
+                fh = fh.s3.open(self._filename)                
             except AttributeError:
                 fh = open(self._filename, 'rb')
 

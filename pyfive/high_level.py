@@ -41,7 +41,7 @@ class Group(Mapping):
         self._links = dataobjects.get_links()
         self._dataobjects = dataobjects
         self._attrs = None  # cached property
-
+        
     def __repr__(self):
         return '<HDF5 group "%s" (%d members)>' % (self.name, len(self))
 
@@ -91,7 +91,11 @@ class Group(Mapping):
         if dataobjs.is_dataset:
             if additional_obj != '.':
                 raise KeyError('%s is a dataset, not a group' % (obj_name))
-            return Dataset(obj_name, DatasetID(dataobjs), self)
+
+            build_index = getattr(self, '_iii', True)
+            return  Dataset(
+                obj_name, DatasetID(dataobjs, build_index=build_index), self
+            )
        
         try:
             # if true, this may well raise a NotImplementedError, if so, we need
@@ -204,7 +208,6 @@ class File(Group):
         self._superblock = SuperBlock(self._fh, 0)
         offset = self._superblock.offset_to_dataobjects
         dataobjects = DataObjects(self._fh, offset)
-
         self.file = self
         self.mode = 'r'
         self.userblock_size = 0
