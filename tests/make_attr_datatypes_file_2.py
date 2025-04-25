@@ -13,6 +13,7 @@ with h5py.File('attr_datatypes_2.hdf5', 'w') as ds:
     ds.attrs["unicode_1dim"] = np.array([unicode], dtype=dt)
     ds.attrs["unicode_arrary"] = np.array([unicode, "foobár"], dtype=dt)
     ds.attrs["unicode_list"] = [unicode]
+    ds.attrs["unicode_list_empty"] = []
     
     dt = h5py.string_dtype("ascii")
     # if dtype is ascii it's irrelevant if the data is provided as bytes or string

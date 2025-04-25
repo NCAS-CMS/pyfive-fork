@@ -41,7 +41,7 @@ class Group(Mapping):
         self._links = dataobjects.get_links()
         self._dataobjects = dataobjects
         self._attrs = None  # cached property
-        
+
     def __repr__(self):
         return '<HDF5 group "%s" (%d members)>' % (self.name, len(self))
 
@@ -91,10 +91,11 @@ class Group(Mapping):
         if dataobjs.is_dataset:
             if additional_obj != '.':
                 raise KeyError('%s is a dataset, not a group' % (obj_name))
-
-            build_index = getattr(self, '_iii', True)
+            
+            build_chunk_index = getattr(self, '_build_chunk_index', True)
             return  Dataset(
-                obj_name, DatasetID(dataobjs, build_index=build_index), self
+                obj_name, DatasetID(
+                    dataobjs, build_chunk_index=build_chunk_index), self
             )
        
         try:

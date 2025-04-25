@@ -228,7 +228,7 @@ class DataObjects(object):
                     f"Attribute {name} type not implemented, set to None."
                 )
             return name, None
-        
+
         offset += _padded_size(attr_dict['datatype_size'], padding_multiple)
 
         # Read the dataspace information
@@ -237,8 +237,8 @@ class DataObjects(object):
         offset += _padded_size(attr_dict['dataspace_size'], padding_multiple)
 
         if dtype == "S1" and offset == len(buffer):
-            # This attribute is an empty string, so don't try to read
-            # anything from the buffer
+            # This attribute is (some sort of) empty string, so don't
+            # try to read anything from the buffer
             items = 0
 
         # Read the value(s)
@@ -317,8 +317,10 @@ class DataObjects(object):
     def maxshape(self):
         """ Maximum Shape of the dataset. (None for unlimited dimension) """
         try:
+            # Try to return a cached value
             return self._cached_maxshape
         except AttributeError:
+            # Get maxshape from the dataset, and cache it.
             msg = self.find_msg_type(DATASPACE_MSG_TYPE)[0]
             msg_offset = msg['offset_to_message']
             shape, maxshape = determine_data_shape(self.msg_data, msg_offset)

@@ -25,7 +25,8 @@ class DatasetID:
     instance, it is completely independent of the parent file, and it can be used 
     efficiently in distributed threads without thread contention to the b-tree etc.
     """
-    def __init__(self, dataobject, pseudo_chunking_size_MB=4, build_index=True):
+    def __init__(self, dataobject, pseudo_chunking_size_MB=4,
+                 build_chunk_index=True):
         """ 
         Instantiated with the pyfive datasetdataobject, we copy and cache everything 
         we want so that the only file operations are now data accesses.
@@ -40,6 +41,10 @@ class DatasetID:
         (Currently the only way to change this value is by explicitly using
         the set_pseudo_chunk_size method. Most users will not need to change 
         it.)
+
+        If build_chunk_index is True, then build the chunk index if it doesn't
+        exist, otherwise skip this step. Building the chunk index when it
+        is not needed can affect performance.
 
         """
         self._order = dataobject.order
@@ -91,7 +96,8 @@ class DatasetID:
 
         self._index =  None
         # throws a flake8 wobbly for Python<3.10; match is Py3.10+ syntax
-        if build_index:
+        if build_chunk_index:
+            # Build the chunk index, if it doesn't exist.
             match self.layout_class:  # noqa
                 case 0:  #compact storage
                     raise NotImplementedError("Compact Storage")
@@ -290,10 +296,6 @@ class DatasetID:
             return
         
         logging.info(f'Building chunk index in pyfive {version("pyfive")}')
-
-        print (1)
-        print ( dataobject._chunk_address, dataobject._chunk_dims)
-        print(2)
         chunk_btree = BTreeV1RawDataChunks(
                 dataobject.fh, dataobject._chunk_address, dataobject._chunk_dims)
         
@@ -562,7 +564,8 @@ class DatasetID:
         fh = self.__fh
         if fh.closed:
             try:
-                fh = fh.s3.open(self._filename)                
+                # Try s3 being an s3fs.S3File object
+                fh = fh.s3.open(self._filename)
             except AttributeError:
                 fh = open(self._filename, 'rb')
 
@@ -586,7 +589,6 @@ class DatasetMeta:
     """
     def __init__(self, dataobject):
 
-#        self.attributes = dataobject.compression
         self.maxshape = dataobject.maxshape
         self.compression = dataobject.compression
         self.compression_opts = dataobject.compression_opts
