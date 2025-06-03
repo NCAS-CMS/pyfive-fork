@@ -1,6 +1,10 @@
 .coverage
+.pyc
 build
-pyfive.egg-info/
+__pycache__/
+*.egg-info
+.idea
+.DS_Store
+test-reports/
+<_io.Bytes*>
 pyfive/__pycache__/
-tests/__pycache__/
-test-reports

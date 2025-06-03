@@ -8,6 +8,7 @@ import pyfive
 
 DIRNAME = os.path.dirname(__file__)
 ATTR_DATATYPES_HDF5_FILE = os.path.join(DIRNAME, 'attr_datatypes.hdf5')
+ATTR_DATATYPES_HDF5_FILE_2 = os.path.join(DIRNAME, 'attr_datatypes_2.hdf5')
 
 
 def test_numeric_scalar_attr_datatypes():
@@ -61,7 +62,7 @@ def test_string_scalar_attr_datatypes():
         assert hfile.attrs['string_one'] == b'H'
         assert hfile.attrs['string_two'] == b'Hi'
 
-        assert hfile.attrs['vlen_string'] == b'Hello'
+        assert hfile.attrs['vlen_string'] == 'Hello'
         assert hfile.attrs['vlen_unicode'] == (
             u'Hello' + b'\xc2\xa7'.decode('utf-8'))
 
@@ -104,3 +105,83 @@ def test_vlen_sequence_attr_datatypes():
         assert_array_equal(vlen_attr[0], [0])
         assert_array_equal(vlen_attr[1], [1, 2, 3])
         assert_array_equal(vlen_attr[2], [4, 5])
+
+
+def test_attributes_2():
+
+    ascii = "ascii"
+    unicode = "unicodé"
+
+    with pyfive.File(ATTR_DATATYPES_HDF5_FILE_2) as ds:
+        foobar = "foobár"
+        assert isinstance(ds.attrs["unicode"], str)
+        assert ds.attrs["unicode"] == unicode
+        assert isinstance(ds.attrs["unicode_0dim"], str)
+        assert ds.attrs["unicode_0dim"] == unicode
+        assert isinstance(ds.attrs["unicode_1dim"], np.ndarray)
+        assert ds.attrs["unicode_1dim"] == unicode
+        assert isinstance(ds.attrs["unicode_arrary"], np.ndarray)
+        assert (ds.attrs["unicode_arrary"] == [unicode, "foobár"]).all()
+        assert isinstance(ds.attrs["unicode_list"], np.ndarray)
+        assert (ds.attrs["unicode_list"] == unicode).all()
+
+        # bytes and strings are received as strings for h5py3
+        foobar = "foobar"
+        assert isinstance(ds.attrs["ascii"], str)
+        assert ds.attrs["ascii"] == "ascii"
+        assert isinstance(ds.attrs["ascii_0dim"], str)
+        assert ds.attrs["ascii_0dim"] == ascii
+        assert isinstance(ds.attrs["ascii_1dim"], np.ndarray)
+        assert ds.attrs["ascii_1dim"] == ascii
+        assert isinstance(ds.attrs["ascii_array"], np.ndarray)
+        assert (ds.attrs["ascii_array"] == [ascii, foobar]).all()
+        assert isinstance(ds.attrs["ascii_list"], np.ndarray)
+        assert ds.attrs["ascii_list"] == "ascii"
+
+        assert isinstance(ds.attrs["bytes"], str)
+        assert ds.attrs["bytes"] == ascii
+        assert isinstance(ds.attrs["bytes_0dim"], str)
+        assert ds.attrs["bytes_0dim"] == ascii
+        assert isinstance(ds.attrs["bytes_1dim"], np.ndarray)
+        assert ds.attrs["bytes_1dim"] == ascii
+        assert isinstance(ds.attrs["bytes_array"], np.ndarray)
+        assert (ds.attrs["bytes_array"] == [ascii, foobar]).all()
+        assert isinstance(ds.attrs["bytes_list"], np.ndarray)
+        assert ds.attrs["bytes_list"] == "ascii"
+
+        foobar = "foobár"
+        assert isinstance(ds.attrs["unicode_fixed"], np.bytes_)
+        assert ds.attrs["unicode_fixed"] == np.array(unicode.encode())
+        assert isinstance(ds.attrs["unicode_fixed_0dim"], np.bytes_)
+        assert ds.attrs["unicode_fixed_0dim"] == np.array(unicode.encode())
+        assert isinstance(ds.attrs["unicode_fixed_1dim"], np.ndarray)
+        assert ds.attrs["unicode_fixed_1dim"] == np.array(unicode.encode())
+        assert isinstance(ds.attrs["unicode_fixed_arrary"], np.ndarray)
+        assert (ds.attrs["unicode_fixed_arrary"] == np.array(
+            [unicode.encode(), foobar.encode()]
+        )).all()
+
+        foobar = "foobar"
+        assert isinstance(ds.attrs["ascii_fixed"], np.bytes_)
+        assert ds.attrs["ascii_fixed"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["ascii_fixed_0dim"], np.bytes_)
+        assert ds.attrs["ascii_fixed_0dim"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["ascii_fixed_1dim"], np.ndarray)
+        assert ds.attrs["ascii_fixed_1dim"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["ascii_fixed_array"], np.ndarray)
+        assert (ds.attrs["ascii_fixed_array"] == np.array([ascii.encode(), "foobar".encode()])).all()
+
+        assert isinstance(ds.attrs["bytes_fixed"], np.bytes_)
+        assert ds.attrs["bytes_fixed"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["bytes_fixed_0dim"], np.bytes_)
+        assert ds.attrs["bytes_fixed_0dim"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["bytes_fixed_1dim"], np.ndarray)
+        assert ds.attrs["bytes_fixed_1dim"] == np.array(ascii.encode())
+        assert isinstance(ds.attrs["bytes_fixed_array"], np.ndarray)
+        assert (ds.attrs["bytes_fixed_array"] == np.array([ascii.encode(), "foobar".encode()])).all()
+
+        assert ds.attrs["int"] == 1
+        assert ds.attrs["intlist"] == 1
+        np.testing.assert_equal(ds.attrs["int_array"], np.arange(10))
+        np.testing.assert_equal(ds.attrs["empty_list"], np.array([]))
+        np.testing.assert_equal(ds.attrs["empty_array"], np.array([]))
