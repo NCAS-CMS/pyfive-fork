@@ -6,4 +6,4 @@ channels:
 
 dependencies:
   - numpy
-  - python >=3.9
+  - python >=3.10
