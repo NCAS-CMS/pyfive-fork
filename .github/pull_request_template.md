@@ -22,7 +22,7 @@ Closes #issue_number
 
 ## Before you get started
 
-- [ ] [☝ Create an issue](https://github.com/valeriupredoi/PyActiveStorage/issues) to discuss what you are going to do
+- [ ] [☝ Create an issue](https://github.com/NCAS-CMS/pyfive/issues) to discuss what you are going to do
 
 ## Checklist
 
@@ -30,5 +30,5 @@ Closes #issue_number
 - [ ] This pull request has a minimal description (most was discussed in the issue, but a two-liner description is still desirable)
 - [ ] Unit tests have been added (if codecov test fails)
 - [ ] Any changed dependencies have been added or removed correctly (if need be)
-- [ ] If you are working on the documentation, please ensure the [current build](https://app.readthedocs.org/projects/pyactivestorage/builds/) passes
+- [ ] If you are working on the documentation, please ensure the [current build](xxx) passes
 - [ ] All tests pass
