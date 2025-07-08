@@ -62,4 +62,9 @@ exercised using the commands ``pytest`` from the root directory assuming the
 Conda-feedstock
 ===============
 
-Package repository at https://github.com/conda-forge/pyfive-feedstock
+Package repository at [conda feedstock](https://github.com/conda-forge/pyfive-feedstock)
+
+Codecov
+=======
+
+Test coverage assessement is done using [codecov](https://app.codecov.io/gh/NCAS-CMS/pyfive/)
