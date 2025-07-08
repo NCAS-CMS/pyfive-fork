@@ -1,3 +1,5 @@
+codecov: 
+  token: 7defd300-e050-4cb2-8ef4-3a8050140452
 coverage:
   status:
     project: off
