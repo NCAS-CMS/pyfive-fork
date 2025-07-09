@@ -1,5 +1,5 @@
 # OBSOLETE FORK, please use [main pyfive repo](https://github.com/NCAS-CMS/pyfive) instead
-### Last hash synced from Pyfive (main) a2e0287fbc63a4fb78e8c31616ea35e40c751584
+### Last hash synced from Pyfive (main) [a2e0287fbc63a4fb78e8c31616ea35e40c751584](https://github.com/NCAS-CMS/pyfive/commit/a2e0287fbc63a4fb78e8c31616ea35e40c751584)
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity)
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
